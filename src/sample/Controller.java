@@ -1,10 +1,12 @@
 package sample;
 
 import javafx.animation.AnimationTimer;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyEvent;
 
 public class Controller {
     public Canvas canvas;
@@ -14,33 +16,34 @@ public class Controller {
     private boolean steeringRight = false;
 
     public void initListeners(Scene scene) {
-        scene.setOnKeyPressed(event -> {
-            switch (event.getCode().toString()) {
-                case "A":
-                case "LEFT": {
-                    steeringLeft = true;
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                switch (event.getCode().toString()) {
+                    case "A":
+                    case "LEFT":
+                        steeringLeft = true;
                     break;
-                }
 
-                case "D":
-                case "RIGHT": {
-                    steeringRight = true;
+                    case "D":
+                    case "RIGHT":
+                        steeringRight = true;
                     break;
                 }
             }
         });
-
-        scene.setOnKeyReleased(event -> {
-            switch (event.getCode().toString()) {
-                case "A":
-                case "LEFT": {
-                    steeringLeft = false;
+        scene.addEventFilter(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                switch (event.getCode().toString()) {
+                    case "A":
+                    case "LEFT":
+                        steeringLeft = false;
                     break;
-                }
 
-                case "D":
-                case "RIGHT": {
-                    steeringRight = false;
+                    case "D":
+                    case "RIGHT":
+                        steeringRight = false;
                     break;
                 }
             }
@@ -50,7 +53,6 @@ public class Controller {
     @FXML
     public void initialize() {
         GraphicsContext ctx = canvas.getGraphicsContext2D();
-
 
         game = new Game(() -> {
             System.out.println("GAME OVER");
@@ -76,6 +78,7 @@ public class Controller {
         }.start();
     }
 
+    @FXML
     public void startGame() {
         game.startGame();
     }
