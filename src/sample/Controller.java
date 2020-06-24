@@ -15,16 +15,34 @@ public class Controller {
 
     public void initListeners(Scene scene) {
         scene.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-                case A, LEFT -> steeringLeft = true;
-                case D, RIGHT -> steeringRight = true;
+            switch (event.getCode().toString()) {
+                case "A":
+                case "LEFT": {
+                    steeringLeft = true;
+                    break;
+                }
+
+                case "D":
+                case "RIGHT": {
+                    steeringRight = true;
+                    break;
+                }
             }
         });
 
         scene.setOnKeyReleased(event -> {
-            switch (event.getCode()) {
-                case A, LEFT -> steeringLeft = false;
-                case D, RIGHT -> steeringRight = false;
+            switch (event.getCode().toString()) {
+                case "A":
+                case "LEFT": {
+                    steeringLeft = false;
+                    break;
+                }
+
+                case "D":
+                case "RIGHT": {
+                    steeringRight = false;
+                    break;
+                }
             }
         });
     }

@@ -1,28 +1,31 @@
 package sample;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DatabaseCreate {
-    public static void createNewDatabase(String fileName) {
-
-        Connection conn;
-        String url = getPath() + "\\database\\" + fileName;
-
+    public static void connect(String databaseFileName) {
+        Connection conn = null;
         try {
-            Class.forName("org.sqlite.JDBC");
+            String url = "jdbc:sqlite:" +  getPath() + "\\data\\" + databaseFileName;
             conn = DriverManager.getConnection(url);
-            DatabaseMetaData meta = conn.getMetaData();
-            System.out.println("The driver name is " + meta.getDriverName());
-            System.out.println("A new database has been created.");
 
+            System.out.println("Connected to the database");
+            Statement stmt = conn.createStatement();
 
+            ResultSet result = stmt.executeQuery("SELECT * FROM highscores");
+            if (result.next()) {
+                System.out.println(result.getString("Nickname") + ": " + result.getInt("Points"));
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
         }
     }
 
@@ -32,7 +35,7 @@ public class DatabaseCreate {
     }
 
     public static void main(String[] args){
-        createNewDatabase("test.db");
+        connect("main.db");
     }
 
 
