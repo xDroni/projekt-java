@@ -75,4 +75,8 @@ public class Controller {
             }
         }.start();
     }
+
+    public void startGame() {
+        game.startGame();
+    }
 }

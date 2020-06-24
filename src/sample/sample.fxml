@@ -5,7 +5,6 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-
 <GridPane alignment="center" hgap="0.0" vgap="0.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <columnConstraints>
       <ColumnConstraints />
@@ -23,6 +22,10 @@
                   <Font size="24.0" />
                </font>
             </Label>
+            <Button layoutX="96.0" layoutY="439.0" mnemonicParsing="false" onMouseClicked="#startGame" prefHeight="35.0" prefWidth="125.0" text="Nowa gra">
+               <font>
+                  <Font size="22.0" />
+               </font></Button>
          </children>
       </Pane>
       <Pane prefHeight="600" prefWidth="600.0" GridPane.columnIndex="2">

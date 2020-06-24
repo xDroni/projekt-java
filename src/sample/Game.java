@@ -48,7 +48,6 @@ public class Game {
         this.gameOverListener = gameOverListener;
         this.pointListener = pointListener;
         rand = new Random();
-        startGame();
     }
 
     public Object getPaddle() {
