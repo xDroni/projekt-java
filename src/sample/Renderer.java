@@ -4,9 +4,18 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import sample.common.Object;
 
+import java.util.function.Consumer;
+
 public class Renderer {
-    private GraphicsContext ctx;
+    private final GraphicsContext ctx;
     private final double width, height;
+
+    private static final class Palette {
+        static final Color BACKGROUND = Color.rgb(0, 172, 193);
+        static final Color PADDLE = Color.rgb(0, 96, 100);
+        static final Color BUBBLE = Color.rgb(77, 208, 225);
+        static final Color MEAL = Color.rgb(197, 225, 165);
+    }
 
     public Renderer(GraphicsContext ctx, final double width, final double height) {
         this.ctx = ctx;
@@ -23,14 +32,16 @@ public class Renderer {
     }
 
     public void render(Game game) {
-        ctx.clearRect(0, 0, width, height);
+        ctx.setFill(Palette.BACKGROUND);
+        ctx.fillRect(0, 0, width, height);
 
-        ctx.setFill(Color.RED);
-        for(Object bubble : game.getBubbles()) {
-            drawCircle(bubble);
-        }
+        ctx.setFill(Palette.BUBBLE);
+        game.getBubbles().forEach((Consumer<Object>) this::drawCircle);
 
-        ctx.setFill(Color.BLUEVIOLET);
-        drawRect(game.getPlatform());
+        ctx.setFill(Palette.MEAL);
+        game.getMeals().forEach((Consumer<Object>) this::drawCircle);
+
+        ctx.setFill(Palette.PADDLE);
+        drawRect(game.getPaddle());
     }
 }

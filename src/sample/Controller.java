@@ -33,7 +33,12 @@ public class Controller {
     public void initialize() {
         GraphicsContext ctx = canvas.getGraphicsContext2D();
 
-        game = new Game();
+
+        game = new Game(() -> {
+            System.out.println("GAME OVER");
+        }, totalPoints -> {
+            System.out.println("POINTS: " + totalPoints);
+        });
         Renderer renderer = new Renderer(ctx, canvas.getWidth(), canvas.getHeight());
 
         final long[] last = {0};
@@ -41,10 +46,11 @@ public class Controller {
         new AnimationTimer() {
             @Override
             public void handle(long currentNanoTime) {
-                if(!game.running) {
+                if (!game.isRunning()) {
                     return;
                 }
-                game.update((currentNanoTime - last[0]) / 1000000000.0, steeringLeft, steeringRight);
+                double delta = (currentNanoTime - last[0]) / 1000000000.0;
+                game.update(Math.min(delta, 1.0), steeringLeft, steeringRight);
                 renderer.render(game);
 
                 last[0] = currentNanoTime;

@@ -1,5 +1,6 @@
 package sample;
 
+import sample.common.Config;
 import sample.common.Object;
 
 import java.util.ArrayList;
@@ -8,55 +9,146 @@ import java.util.Random;
 
 import static sample.common.Config.*;
 
-public class Game {
-    private Random rand;
+interface GameOverListener {
+    void onOver();
+}
 
-    private class Bubble extends Object {
+interface NewPointListener {
+    void onPointCollected(long totalPoints);
+}
+
+public class Game {
+    private final Random rand;
+
+    private class FallingObject extends Object {
         public double speed;
-        public Bubble(double size, double speed) {
-            super(rand.nextDouble()*(1.0 - size) + size/2.0, -size/2.0, size, size);
+
+        public FallingObject(double size, double speed) {
+            super(rand.nextDouble() * (1.0 - size) + size / 2.0, -size / 2.0, size, size);
             this.speed = speed;
+        }
+
+        public void update(double delta) { //TODO: speed it up over time (use Game:timer)
+            this.y += this.speed * delta;
         }
     }
 
-    public boolean running = true;
-    private Object platform = new Object(0.5, 1.0-PLATFORM_HEIGHT/2.0, 0.2, PLATFORM_HEIGHT);
-    private List<Bubble> bubbles = new ArrayList<>();
+    private boolean running = false;
+    private double health = 1;
+    private double timer = 0;
+    private long points = 0;
+    private final Object paddle = new Object(0.5, 1.0 - PLATFORM_HEIGHT / 2.0, 0.2, PLATFORM_HEIGHT);
+    private final List<FallingObject> bubbles = new ArrayList<>();
+    private final List<FallingObject> meals = new ArrayList<>();
 
-    public Game() {
+    private final GameOverListener gameOverListener;
+    private final NewPointListener pointListener;
+
+    public Game(GameOverListener gameOverListener, NewPointListener pointListener) {
+        this.gameOverListener = gameOverListener;
+        this.pointListener = pointListener;
         rand = new Random();
+        startGame();
     }
 
-    public Object getPlatform() {
-        return platform;
+    public Object getPaddle() {
+        return paddle;
     }
 
-    public List<Bubble> getBubbles() {
+    public List<FallingObject> getBubbles() {
         return bubbles;
     }
 
-    private boolean shouldBubbleSpawn() {
-        return rand.nextDouble() < 1.0 / 60.0;
+    public List<FallingObject> getMeals() {
+        return meals;
     }
 
-    private void spawnBubble() {
+    public boolean isRunning() {
+        return running;
+    }
+
+    public void startGame() {
+        this.running = true;
+        this.health = 1;
+        this.timer = 0;
+        this.points = 0;
+        this.bubbles.clear();
+        this.meals.clear();
+        this.paddle.x = 0.5;
+    }
+
+    private FallingObject createFallingObject() {
         double randomSize = rand.nextDouble() * (MAX_BUBBLE_SIZE - MIN_BUBBLE_SIZE) + MIN_BUBBLE_SIZE;
         double randomSpeed = rand.nextDouble() * (MAX_BUBBLE_SPEED - MIN_BUBBLE_SPEED) + MIN_BUBBLE_SPEED;
-        bubbles.add(new Bubble(randomSize, randomSpeed));
+        return new FallingObject(randomSize, randomSpeed);
+    }
+
+    private void trySpawnBubble() {
+        if (rand.nextDouble() > 1.0 / 60.0) {
+            return;
+        }
+
+        bubbles.add(createFallingObject());
+    }
+
+    private void trySpawnMeal() {
+        if (rand.nextDouble() > 0.1 / 60.0) {
+            return;
+        }
+
+        meals.add(createFallingObject());
+    }
+
+    private boolean isPaddleColliding(FallingObject obj) {
+        double paddleUp = paddle.y - paddle.height / 2.0;
+        double paddleLeft = paddle.x - paddle.width / 2.0;
+        double paddleRight = paddle.x + paddle.width / 2.0;
+        if (obj.y + obj.height / 2.0 > paddleUp && obj.x > paddleLeft && obj.x < paddleRight) {
+            return true;
+        }
+        return Math.sqrt(Math.pow(obj.x - paddleLeft, 2) + Math.pow(obj.y - paddleUp, 2)) < obj.width / 2.0 ||
+                Math.sqrt(Math.pow(obj.x - paddleRight, 2) + Math.pow(obj.y - paddleUp, 2)) < obj.width / 2.0;
     }
 
     public void update(double delta, boolean left, boolean right) {
-        delta = Math.min(delta, 1.0);
+        this.timer += delta;
 
         int dir = left ? -1 : right ? 1 : 0;
-        platform.x = Math.min(1.0 - platform.width/2, Math.max(platform.width/2, platform.x + PLATFORM_SPEED * delta * dir));
+        paddle.x = Math.min(1.0 - paddle.width / 2, Math.max(paddle.width / 2, paddle.x + PLATFORM_SPEED * delta * dir));
 
-        for(Bubble bubble : bubbles) {
-            bubble.y += bubble.speed * delta;
-        }
+        List<FallingObject> diedBubbles = new ArrayList<>();
+        bubbles.forEach(bubble -> {
+            bubble.update(delta);
+            if (isPaddleColliding(bubble)) {
+                this.health -= Config.BUBBLE_DAMAGE;
+                if (this.health <= 0) {
+                    this.running = false;
+                    this.gameOverListener.onOver();
+                }
 
-        if(shouldBubbleSpawn()) {
-            spawnBubble();
-        }
+                diedBubbles.add(bubble);
+            }
+
+            if (bubble.y - bubble.height / 2.0 > 1) {
+                diedBubbles.add(bubble);
+            }
+        });
+        bubbles.removeAll(diedBubbles);
+
+        List<FallingObject> diedMeals = new ArrayList<>();
+        meals.forEach(meal -> {
+            meal.update(delta);
+            if (isPaddleColliding(meal)) {
+                this.pointListener.onPointCollected(++this.points);
+                diedMeals.add(meal);
+            }
+            if (meal.y - meal.height / 2.0 > 1) {
+                diedMeals.add(meal);
+            }
+        });
+        meals.removeAll(diedMeals);
+
+        trySpawnBubble();
+        trySpawnMeal();
     }
 }
