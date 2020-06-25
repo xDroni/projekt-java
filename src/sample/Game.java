@@ -1,6 +1,5 @@
 package sample;
 
-import sample.common.Config;
 import sample.common.Object;
 
 import java.util.ArrayList;
@@ -28,8 +27,8 @@ public class Game {
             this.speed = speed;
         }
 
-        public void update(double delta) { //TODO: speed it up over time (use Game:timer)
-            this.y += this.speed * delta;
+        public void update(double delta, double acceleration) {
+            this.y += Math.min(this.height, this.speed * acceleration * delta);
         }
     }
 
@@ -37,7 +36,7 @@ public class Game {
     private double health = 1;
     private double timer = 0;
     private long points = 0;
-    private final Object paddle = new Object(0.5, 1.0 - PLATFORM_HEIGHT / 2.0, 0.2, PLATFORM_HEIGHT);
+    private final Object paddle = new Object(0.5, 1.0 - PLATFORM_HEIGHT / 2.0, PLATFORM_WIDTH, PLATFORM_HEIGHT);
     private final List<FallingObject> bubbles = new ArrayList<>();
     private final List<FallingObject> meals = new ArrayList<>();
 
@@ -117,9 +116,9 @@ public class Game {
 
         List<FallingObject> diedBubbles = new ArrayList<>();
         bubbles.forEach(bubble -> {
-            bubble.update(delta);
+            bubble.update(delta, 1.0 + timer * ACCELERATION_FACTOR);
             if (isPaddleColliding(bubble)) {
-                this.health -= Config.BUBBLE_DAMAGE;
+                this.health -= BUBBLE_DAMAGE;
                 if (this.health <= 0) {
                     this.running = false;
                     this.gameOverListener.onOver();
@@ -136,7 +135,7 @@ public class Game {
 
         List<FallingObject> diedMeals = new ArrayList<>();
         meals.forEach(meal -> {
-            meal.update(delta);
+            meal.update(delta, 1.0);
             if (isPaddleColliding(meal)) {
                 this.pointListener.onPointCollected(++this.points);
                 diedMeals.add(meal);
