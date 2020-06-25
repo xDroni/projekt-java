@@ -1,32 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.canvas.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<GridPane alignment="center" hgap="10.0" vgap="10.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<GridPane alignment="center" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <columnConstraints>
       <ColumnConstraints />
-      <ColumnConstraints maxWidth="341.0" minWidth="21.0" prefWidth="182.0" />
-      <ColumnConstraints maxWidth="639.0" minWidth="319.0" prefWidth="478.0" />
+      <ColumnConstraints prefWidth="316" />
+      <ColumnConstraints prefWidth="512" />
    </columnConstraints>
    <rowConstraints>
-      <RowConstraints />
+      <RowConstraints prefHeight="512" />
    </rowConstraints>
-   <children>
-      <Pane prefHeight="600" prefWidth="600.0" GridPane.columnIndex="2">
-         <children>
-            <Canvas fx:id="canvas" height="600" width="600" />
-         </children></Pane>
-      <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="TOP">
-         <children>
-            <Label layoutX="22.0" layoutY="11.0" text="Punkty">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Label>
-         </children>
-      </Pane>
-   </children>
+   <Pane prefHeight="316" prefWidth="316" style="-fx-background-color: #00838F;" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="TOP">
+      <Label layoutX="16.0" layoutY="6.0" style="-fx-pref-width: 316;" text="Punkty">
+         <font>
+            <Font size="24.0" />
+         </font>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </Label>
+      <Label id="pointsLabel" fx:id="pointsLabel" layoutX="118.0" layoutY="6.0" text="0" visible="false">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label layoutX="16.0" layoutY="51.0" style="-fx-pref-width: 316;" text="Zdrowie">
+         <font>
+            <Font size="24.0" />
+         </font>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </Label>
+      <Label id="pointsLabel" fx:id="healthLabel" layoutX="118.0" layoutY="51.0" text="3" visible="false">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Button layoutX="96.0" layoutY="439.0" mnemonicParsing="false" onMouseClicked="#startGame" prefHeight="35.0" prefWidth="125.0" style="-fx-background-color: #4527A0;" text="Nowa gra" textFill="WHITE">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Button>
+      <TableView fx:id="highscoresTable" focusTraversable="false" layoutX="8.0" layoutY="147.0" prefHeight="200.0" prefWidth="300.0" />
+   </Pane>
+   <Pane prefHeight="600" prefWidth="600.0" GridPane.columnIndex="2">
+      <Canvas fx:id="canvas" height="512.0" width="512.0" />
+      <Label fx:id="timerLabel" alignment="BOTTOM_LEFT" layoutX="461.0" layoutY="471.0" text="1" visible="false">
+         <font>
+            <Font size="24.0" />
+         </font>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </Label>
+      <Label fx:id="gameOverLabel" layoutX="197.0" layoutY="238.0" text="Koniec Gry" textFill="#80deea" visible="false">
+         <font>
+            <Font size="25.0" />
+         </font></Label>
+      <TextField fx:id="nicknameInput" alignment="CENTER" layoutX="182.0" layoutY="274.0" onKeyPressed="#addNewScoreInput" promptText="Podaj swoje imię" visible="false" />
+      <Button fx:id="saveButton" layoutX="216.0" layoutY="311.0" mnemonicParsing="false" onMouseClicked="#startGame" onMousePressed="#addNewScoreButton" prefHeight="25.0" prefWidth="80.0" text="Zapisz" visible="false">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+   </Pane>
 </GridPane>
