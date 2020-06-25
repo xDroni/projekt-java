@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.canvas.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -17,7 +18,28 @@
    <children>
       <Pane prefHeight="316" prefWidth="316" style="-fx-background-color: #eee;" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="TOP">
          <children>
-            <Label layoutY="6.0" style="-fx-pref-width: 316;" text="Punkty">
+            <Label layoutX="16.0" layoutY="6.0" style="-fx-pref-width: 316;" text="Punkty">
+               <font>
+                  <Font size="24.0" />
+               </font>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </Label>
+            <Label id="pointsLabel" fx:id="pointsLabel" layoutX="118.0" layoutY="6.0" text="0">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label layoutX="16.0" layoutY="51.0" style="-fx-pref-width: 316;" text="Zdrowie">
+               <font>
+                  <Font size="24.0" />
+               </font>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </Label>
+            <Label id="pointsLabel" fx:id="healthLabel" layoutX="118.0" layoutY="51.0" text="3">
                <font>
                   <Font size="24.0" />
                </font>

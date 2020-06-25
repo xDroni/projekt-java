@@ -16,6 +16,10 @@ interface NewPointListener {
     void onPointCollected(long totalPoints);
 }
 
+interface DamageTakenListener {
+    void onDamageTaken(int newHealth);
+}
+
 public class Game {
     private final Random rand;
 
@@ -33,7 +37,7 @@ public class Game {
     }
 
     private boolean running = false;
-    private double health = 1;
+    private int health = 3;
     private double timer = 0;
     private long points = 0;
     private final Object paddle = new Object(0.5, 1.0 - PLATFORM_HEIGHT / 2.0, PLATFORM_WIDTH, PLATFORM_HEIGHT);
@@ -42,10 +46,12 @@ public class Game {
 
     private final GameOverListener gameOverListener;
     private final NewPointListener pointListener;
+    private final DamageTakenListener damageTakenListener;
 
-    public Game(GameOverListener gameOverListener, NewPointListener pointListener) {
+    public Game(GameOverListener gameOverListener, NewPointListener pointListener, DamageTakenListener damageTakenListener) {
         this.gameOverListener = gameOverListener;
         this.pointListener = pointListener;
+        this.damageTakenListener = damageTakenListener;
         rand = new Random();
     }
 
@@ -67,7 +73,7 @@ public class Game {
 
     public void startGame() {
         this.running = true;
-        this.health = 1;
+        this.health = 3;
         this.timer = 0;
         this.points = 0;
         this.bubbles.clear();
@@ -119,6 +125,7 @@ public class Game {
             bubble.update(delta, 1.0 + timer * ACCELERATION_FACTOR);
             if (isPaddleColliding(bubble)) {
                 this.health -= BUBBLE_DAMAGE;
+                this.damageTakenListener.onDamageTaken(this.health);
                 if (this.health <= 0) {
                     this.running = false;
                     this.gameOverListener.onOver();

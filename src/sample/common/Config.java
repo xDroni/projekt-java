@@ -11,6 +11,6 @@ public class Config {
     public static final double MIN_BUBBLE_SPEED = 0.2;
     public static final double MAX_BUBBLE_SPEED = 0.7;
 
-    public static final double BUBBLE_DAMAGE = 0.2;
+    public static final int BUBBLE_DAMAGE = 1;
     public static final double ACCELERATION_FACTOR = 0.02;
 }
