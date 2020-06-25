@@ -5,10 +5,17 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 
 public class Controller {
     public Canvas canvas;
     private Game game = null;
+
+    @FXML
+    private Label pointsLabel;
+
+    @FXML
+    private Label healthLabel;
 
     private boolean steeringLeft = false;
     private boolean steeringRight = false;
@@ -51,12 +58,17 @@ public class Controller {
     public void initialize() {
         GraphicsContext ctx = canvas.getGraphicsContext2D();
 
-
         game = new Game(() -> {
             System.out.println("GAME OVER");
         }, totalPoints -> {
             System.out.println("POINTS: " + totalPoints);
+            pointsLabel.setText(String.valueOf(totalPoints));
+        }, newHealth -> {
+            System.out.println("New health: " + newHealth);
+            healthLabel.setText(String.valueOf(newHealth));
+
         });
+
         Renderer renderer = new Renderer(ctx, canvas.getWidth(), canvas.getHeight());
 
         final long[] last = {0};
