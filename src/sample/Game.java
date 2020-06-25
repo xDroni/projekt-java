@@ -21,6 +21,10 @@ interface DamageTakenListener {
     void onDamageTaken(int newHealth);
 }
 
+interface TimeChange {
+    void onTimeChange(int newTime);
+}
+
 public class Game {
     private final Random rand;
 
@@ -48,11 +52,13 @@ public class Game {
     private final GameOverListener gameOverListener;
     private final NewPointListener pointListener;
     private final DamageTakenListener damageTakenListener;
+    private final TimeChange timeChange;
 
-    public Game(GameOverListener gameOverListener, NewPointListener pointListener, DamageTakenListener damageTakenListener) {
+    public Game(GameOverListener gameOverListener, NewPointListener pointListener, DamageTakenListener damageTakenListener, TimeChange timeChange) {
         this.gameOverListener = gameOverListener;
         this.pointListener = pointListener;
         this.damageTakenListener = damageTakenListener;
+        this.timeChange = timeChange;
         rand = new Random();
     }
 
@@ -117,6 +123,10 @@ public class Game {
 
     public void update(double delta, boolean left, boolean right) {
         this.timer += delta;
+
+        if ((int) (timer - delta) < (int) timer) {
+            this.timeChange.onTimeChange((int) this.timer);
+        }
 
         int dir = left ? -1 : right ? 1 : 0;
         paddle.x = Math.min(1.0 - paddle.width / 2, Math.max(paddle.width / 2, paddle.x + PLATFORM_SPEED * delta * dir));

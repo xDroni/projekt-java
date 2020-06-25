@@ -17,6 +17,9 @@ public class Controller {
     @FXML
     private Label healthLabel;
 
+    @FXML
+    private Label timerLabel;
+
     private boolean steeringLeft = false;
     private boolean steeringRight = false;
 
@@ -57,6 +60,7 @@ public class Controller {
     @FXML
     public void initialize() {
         GraphicsContext ctx = canvas.getGraphicsContext2D();
+        timerLabel.setText("");
 
         game = new Game(() -> {
             System.out.println("GAME OVER");
@@ -66,7 +70,9 @@ public class Controller {
         }, newHealth -> {
             System.out.println("New health: " + newHealth);
             healthLabel.setText(String.valueOf(newHealth));
-
+        }, newTime -> {
+            System.out.println("Time: " + newTime);
+            timerLabel.setText(String.valueOf(newTime));
         });
 
         Renderer renderer = new Renderer(ctx, canvas.getWidth(), canvas.getHeight());
@@ -89,6 +95,9 @@ public class Controller {
     }
 
     public void startGame() {
+        pointsLabel.setText("0");
+        healthLabel.setText("3");
+        timerLabel.setText("0");
         game.startGame();
     }
 }
