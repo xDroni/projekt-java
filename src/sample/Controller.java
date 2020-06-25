@@ -1,11 +1,21 @@
 package sample;
 
 import javafx.animation.AnimationTimer;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Controller {
     public Canvas canvas;
@@ -19,6 +29,19 @@ public class Controller {
 
     @FXML
     private Label timerLabel;
+
+    @FXML
+    private TableView<Score> highscoresTable = new TableView<>();
+
+    @FXML
+    private TableColumn<Score, String> nicknameColumn = new TableColumn<>("Nickname");
+
+    @FXML
+    private TableColumn<Score, Integer> scoreColumn = new TableColumn<>("Punkty");
+
+    @FXML
+    private TableColumn<Score, Integer> timeColumn = new TableColumn<>("Czas");
+
 
     private boolean steeringLeft = false;
     private boolean steeringRight = false;
@@ -59,8 +82,40 @@ public class Controller {
 
     @FXML
     public void initialize() {
+        highscoresTable.setEditable(true);
         GraphicsContext ctx = canvas.getGraphicsContext2D();
         timerLabel.setText("");
+
+        Database database = new Database("main.db");
+        database.connect();
+        ResultSet highscores = database.getHighscores();
+        ObservableList<Score> data = FXCollections.observableArrayList();
+
+        nicknameColumn.setMinWidth(200);
+        nicknameColumn.setCellValueFactory(
+                new PropertyValueFactory<>("nickname"));
+
+        scoreColumn.setMinWidth(50);
+        scoreColumn.setCellValueFactory(
+                new PropertyValueFactory<>("points"));
+
+        timeColumn.setMinWidth(50);
+        timeColumn.setCellValueFactory(
+                new PropertyValueFactory<>("time"));
+
+
+        try {
+            if(highscores.next()) {
+                data.add(new Score(highscores.getString("Nickname"), highscores.getInt("Points"), highscores.getInt("Time")));
+                System.out.println(highscores.getString("Nickname") + ": " + highscores.getInt("Points") + ": " + highscores.getInt("Time"));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        highscoresTable.setItems(data);
+        highscoresTable.getColumns().addAll(nicknameColumn, scoreColumn, timeColumn);
+
 
         game = new Game(() -> {
             System.out.println("GAME OVER");
