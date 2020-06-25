@@ -7,10 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 
@@ -36,6 +33,9 @@ public class Controller {
 
     @FXML
     private TextField nicknameInput;
+
+    @FXML
+    private Button saveButton;
 
     @FXML
     private TableView<Score> highscoresTable = new TableView<>();
@@ -89,44 +89,18 @@ public class Controller {
 
     @FXML
     public void initialize() {
-        highscoresTable.setEditable(true);
         GraphicsContext ctx = canvas.getGraphicsContext2D();
         timerLabel.setText("");
 
-        database.connect();
-        ResultSet highscores = database.getHighscores();
-        ObservableList<Score> data = FXCollections.observableArrayList();
-
-        nicknameColumn.setMinWidth(200);
-        nicknameColumn.setCellValueFactory(
-                new PropertyValueFactory<>("nickname"));
-
-        scoreColumn.setMinWidth(50);
-        scoreColumn.setCellValueFactory(
-                new PropertyValueFactory<>("points"));
-
-        timeColumn.setMinWidth(50);
-        timeColumn.setCellValueFactory(
-                new PropertyValueFactory<>("time"));
-
-
-        try {
-            while (highscores.next()) {
-                data.add(new Score(highscores.getString("Nickname"), highscores.getInt("Points"), highscores.getInt("Time")));
-                System.out.println(highscores.getString("Nickname") + ": " + highscores.getInt("Points") + ": " + highscores.getInt("Time"));
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-
-        highscoresTable.setItems(data);
-        highscoresTable.getColumns().addAll(nicknameColumn, scoreColumn, timeColumn);
-
+        initTable();
+        updateTable();
 
         game = new Game(() -> {
             System.out.println("GAME OVER");
             gameOverLabel.setVisible(true);
             nicknameInput.setVisible(true);
+            nicknameInput.requestFocus();
+            saveButton.setVisible(true);
         }, totalPoints -> {
             System.out.println("POINTS: " + totalPoints);
             pointsLabel.setText(String.valueOf(totalPoints));
@@ -157,20 +131,80 @@ public class Controller {
         }.start();
     }
 
+    private void initTable() {
+        database.connect();
+        highscoresTable.setEditable(true);
+
+        nicknameColumn.setPrefWidth(180);
+        nicknameColumn.setCellValueFactory(
+                new PropertyValueFactory<>("nickname"));
+
+        scoreColumn.setPrefWidth(59);
+        scoreColumn.setSortType(TableColumn.SortType.DESCENDING);
+        scoreColumn.setCellValueFactory(
+                new PropertyValueFactory<>("points"));
+
+        timeColumn.setPrefWidth(59);
+        timeColumn.setCellValueFactory(
+                new PropertyValueFactory<>("time"));
+
+        highscoresTable.getColumns().addAll(nicknameColumn, scoreColumn, timeColumn);
+    }
+
+    private void updateTable() {
+        ResultSet highscores = database.getHighscores();
+        ObservableList<Score> data = FXCollections.observableArrayList();
+
+        try {
+            while (highscores.next()) {
+                data.add(new Score(highscores.getString("Nickname"), highscores.getInt("Points"), highscores.getInt("Time")));
+//                System.out.println(highscores.getString("Nickname") + ": " + highscores.getInt("Points") + ": " + highscores.getInt("Time"));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        highscoresTable.setItems(data);
+        highscoresTable.getSortOrder().add(scoreColumn);
+    }
+
     public void startGame() {
         pointsLabel.setText("0");
         healthLabel.setText("3");
         timerLabel.setText("0");
+        pointsLabel.setVisible(true);
+        healthLabel.setVisible(true);
+        timerLabel.setVisible(true);
         gameOverLabel.setVisible(false);
         nicknameInput.setVisible(false);
+        saveButton.setVisible(false);
         game.startGame();
     }
 
-    public void addNewScore(KeyEvent keyEvent) {
+    public void addNewScoreInput(KeyEvent keyEvent) {
         if (keyEvent.getCode().toString().equals("ENTER")) {
-            database.addNewScore(nicknameInput.getText(), (int) game.getPoints(), (int) game.getTimer());
-            gameOverLabel.setVisible(false);
-            nicknameInput.setVisible(false);
+            if(!nicknameInput.getText().trim().isEmpty()) {
+                database.addNewScore(nicknameInput.getText(), (int) game.getPoints(), (int) game.getTimer());
+                updateTable();
+                clearGUI();
+            }
         }
+    }
+
+    public void addNewScoreButton() {
+        if(!nicknameInput.getText().trim().isEmpty()) {
+            database.addNewScore(nicknameInput.getText(), (int) game.getPoints(), (int) game.getTimer());
+            updateTable();
+            clearGUI();
+        }
+    }
+
+    private void clearGUI() {
+        gameOverLabel.setVisible(false);
+        nicknameInput.setVisible(false);
+        saveButton.setVisible(false);
+        pointsLabel.setVisible(false);
+        healthLabel.setVisible(false);
+        timerLabel.setVisible(false);
     }
 }
