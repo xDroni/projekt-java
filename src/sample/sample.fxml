@@ -42,7 +42,7 @@
             <Font size="24.0" />
          </font>
       </Label>
-      <Button layoutX="96.0" layoutY="439.0" mnemonicParsing="false" onMouseClicked="#startGame" prefHeight="35.0" prefWidth="125.0" text="Nowa gra">
+      <Button layoutX="96.0" layoutY="439.0" mnemonicParsing="false" onMouseClicked="#startGame" prefHeight="35.0" prefWidth="125.0" style="-fx-background-color: #4527A0;" text="Nowa gra" textFill="WHITE">
          <font>
             <Font size="22.0" />
          </font>
