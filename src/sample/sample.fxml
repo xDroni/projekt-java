@@ -6,61 +6,63 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<GridPane alignment="center" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
-          fx:controller="sample.Controller">
+<GridPane alignment="center" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <columnConstraints>
-      <ColumnConstraints/>
-      <ColumnConstraints prefWidth="316"/>
-      <ColumnConstraints prefWidth="512"/>
+      <ColumnConstraints />
+      <ColumnConstraints prefWidth="316" />
+      <ColumnConstraints prefWidth="512" />
    </columnConstraints>
    <rowConstraints>
-      <RowConstraints prefHeight="512"/>
+      <RowConstraints prefHeight="512" />
    </rowConstraints>
-   <Pane prefHeight="316" prefWidth="316" style="-fx-background-color: #eee;" GridPane.columnIndex="1"
-         GridPane.halignment="LEFT" GridPane.valignment="TOP">
+   <Pane prefHeight="316" prefWidth="316" style="-fx-background-color: #eee;" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="TOP">
       <Label layoutX="16.0" layoutY="6.0" style="-fx-pref-width: 316;" text="Punkty">
          <font>
-            <Font size="24.0"/>
+            <Font size="24.0" />
          </font>
          <opaqueInsets>
-            <Insets/>
+            <Insets />
          </opaqueInsets>
       </Label>
       <Label id="pointsLabel" fx:id="pointsLabel" layoutX="118.0" layoutY="6.0" text="0">
          <font>
-            <Font size="24.0"/>
+            <Font size="24.0" />
          </font>
       </Label>
       <Label layoutX="16.0" layoutY="51.0" style="-fx-pref-width: 316;" text="Zdrowie">
          <font>
-            <Font size="24.0"/>
+            <Font size="24.0" />
          </font>
          <opaqueInsets>
-            <Insets/>
+            <Insets />
          </opaqueInsets>
       </Label>
       <Label id="pointsLabel" fx:id="healthLabel" layoutX="118.0" layoutY="51.0" text="3">
          <font>
-            <Font size="24.0"/>
+            <Font size="24.0" />
          </font>
       </Label>
-      <Button layoutX="96.0" layoutY="439.0" mnemonicParsing="false" onMouseClicked="#startGame" prefHeight="35.0"
-              prefWidth="125.0" text="Nowa gra">
+      <Button layoutX="96.0" layoutY="439.0" mnemonicParsing="false" onMouseClicked="#startGame" prefHeight="35.0" prefWidth="125.0" text="Nowa gra">
          <font>
-            <Font size="22.0"/>
+            <Font size="22.0" />
          </font>
       </Button>
-      <TableView fx:id="highscoresTable" layoutX="8.0" layoutY="147.0" prefHeight="200.0" prefWidth="300.0"/>
+      <TableView fx:id="highscoresTable" layoutX="8.0" layoutY="147.0" prefHeight="200.0" prefWidth="300.0" />
    </Pane>
    <Pane prefHeight="600" prefWidth="600.0" GridPane.columnIndex="2">
-      <Canvas fx:id="canvas" height="512.0" width="512.0"/>
+      <Canvas fx:id="canvas" height="512.0" width="512.0" />
       <Label fx:id="timerLabel" alignment="BOTTOM_LEFT" layoutX="461.0" layoutY="471.0" text="1">
          <font>
-            <Font size="24.0"/>
+            <Font size="24.0" />
          </font>
          <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </padding>
       </Label>
+      <Label fx:id="gameOverLabel" layoutX="197.0" layoutY="238.0" text="Koniec Gry" textFill="#80deea" visible="false">
+         <font>
+            <Font size="25.0" />
+         </font></Label>
+      <TextField fx:id="nicknameInput" alignment="CENTER" layoutX="182.0" layoutY="274.0" onKeyPressed="#addNewScore" promptText="Podaj swoje imię" visible="false" />
    </Pane>
 </GridPane>

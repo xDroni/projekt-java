@@ -78,6 +78,14 @@ public class Game {
         return running;
     }
 
+    public long getPoints() {
+        return points;
+    }
+
+    public double getTimer() {
+        return timer;
+    }
+
     public void startGame() {
         this.running = true;
         this.health = 3;

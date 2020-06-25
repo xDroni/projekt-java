@@ -10,16 +10,17 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyEvent;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Controller {
     public Canvas canvas;
     private Game game = null;
+    private final Database database = new Database("main.db");
 
     @FXML
     private Label pointsLabel;
@@ -29,6 +30,12 @@ public class Controller {
 
     @FXML
     private Label timerLabel;
+
+    @FXML
+    private Label gameOverLabel;
+
+    @FXML
+    private TextField nicknameInput;
 
     @FXML
     private TableView<Score> highscoresTable = new TableView<>();
@@ -86,9 +93,7 @@ public class Controller {
         GraphicsContext ctx = canvas.getGraphicsContext2D();
         timerLabel.setText("");
 
-        Database database = new Database("main.db");
         database.connect();
-//        database.addNewScore("asd", 9, 32);
         ResultSet highscores = database.getHighscores();
         ObservableList<Score> data = FXCollections.observableArrayList();
 
@@ -106,7 +111,7 @@ public class Controller {
 
 
         try {
-            while(highscores.next()) {
+            while (highscores.next()) {
                 data.add(new Score(highscores.getString("Nickname"), highscores.getInt("Points"), highscores.getInt("Time")));
                 System.out.println(highscores.getString("Nickname") + ": " + highscores.getInt("Points") + ": " + highscores.getInt("Time"));
             }
@@ -120,6 +125,8 @@ public class Controller {
 
         game = new Game(() -> {
             System.out.println("GAME OVER");
+            gameOverLabel.setVisible(true);
+            nicknameInput.setVisible(true);
         }, totalPoints -> {
             System.out.println("POINTS: " + totalPoints);
             pointsLabel.setText(String.valueOf(totalPoints));
@@ -154,6 +161,16 @@ public class Controller {
         pointsLabel.setText("0");
         healthLabel.setText("3");
         timerLabel.setText("0");
+        gameOverLabel.setVisible(false);
+        nicknameInput.setVisible(false);
         game.startGame();
+    }
+
+    public void addNewScore(KeyEvent keyEvent) {
+        if (keyEvent.getCode().toString().equals("ENTER")) {
+            database.addNewScore(nicknameInput.getText(), (int) game.getPoints(), (int) game.getTimer());
+            gameOverLabel.setVisible(false);
+            nicknameInput.setVisible(false);
+        }
     }
 }
