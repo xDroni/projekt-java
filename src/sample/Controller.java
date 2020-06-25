@@ -88,6 +88,7 @@ public class Controller {
 
         Database database = new Database("main.db");
         database.connect();
+//        database.addNewScore("asd", 9, 32);
         ResultSet highscores = database.getHighscores();
         ObservableList<Score> data = FXCollections.observableArrayList();
 
@@ -105,7 +106,7 @@ public class Controller {
 
 
         try {
-            if(highscores.next()) {
+            while(highscores.next()) {
                 data.add(new Score(highscores.getString("Nickname"), highscores.getInt("Points"), highscores.getInt("Time")));
                 System.out.println(highscores.getString("Nickname") + ": " + highscores.getInt("Points") + ": " + highscores.getInt("Time"));
             }

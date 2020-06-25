@@ -21,7 +21,15 @@ public class Database {
     }
 
     public ResultSet getHighscores() {
-        return executeQuery("SELECT * FROM highscores;");
+        try {
+            Statement stmt = this.conn.createStatement();
+            return stmt.executeQuery("SELECT * FROM highscores;");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
         //        try {
 //            if (this.conn != null) {
 //                this.conn.close();
@@ -33,19 +41,18 @@ public class Database {
     }
 
     public void addNewScore(String nickname, int score, int time) {
-        executeQuery(   "INSERT INTO highscores (Nickname, Points, Time)" +
-                        "VALUES ("+nickname+", "+score+", "+time+")");
-    }
-
-    private ResultSet executeQuery(String query) {
         try {
-            Statement stmt = this.conn.createStatement();
-            return stmt.executeQuery(query);
+            String query = "INSERT INTO highscores(Nickname,Points,Time) VALUES(?,?,?)";
+            PreparedStatement pstmt = this.conn.prepareStatement(query);
+            pstmt.setString(1, nickname);
+            pstmt.setInt(2, score);
+            pstmt.setInt(3, time);
+            pstmt.executeUpdate();
+            System.out.println("Successfully added new score to the database");
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return null;
     }
 
     private static String getPath() {
